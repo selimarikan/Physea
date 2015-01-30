@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Physea
 {
-    public class Cube : PhysObj
+    public class Sphere : PhysObj
     {
         public double Mass { get; set; }
         public double Volume { get; set; }
@@ -19,25 +19,21 @@ namespace Physea
         public Vector2D Velocity { get; set; }
         public Vector2D TotalForce { get; set; }
 
-        public double Width { get; set; }
-        public double Height { get; set; }
-        public double Depth { get; set; }
+        public double Radius { get; set; }
 
         public double PositionX { get; set; }
         public double PositionY { get; set; }
 
         public List<Force> Forces { get; set; }
 
-        public Cube (double len, double mass, double xpos, double ypos)
-        {
-            this.Width = len;
-            this.Height = len;
-            this.Depth = len;
-            this.Mass = mass;
-            this.Volume = this.Width * this.Height * this.Depth;
 
+        public Sphere(double r, double mass, double xpos, double ypos)
+        {
+            this.Radius = r;
+            this.Mass = mass;
             this.PositionX = xpos;
             this.PositionY = ypos;
+            this.Volume = Math.Pow(this.Radius, 3) * Math.PI * 4 / 3;
 
             this.Forces = new List<Force>();
             this.TotalForce = new Vector2D(0, 0);
@@ -57,10 +53,10 @@ namespace Physea
                 else if (f.GetType() == typeof(AirResistance))
                 {
                     var ar = (f as AirResistance);
-                    ar.DragCoefficient = 1.05;
+                    ar.DragCoefficient = 0.47;
                     ar.ObjectVelocity = this.Velocity.Length;
                     ar.Direction = -(this.TotalForce.Normalized());
-                    ar.Area = this.Volume / this.Depth;
+                    ar.Area = Math.Pow(this.Radius, 2) * Math.PI;
                     this.TotalForce += (f.Direction * f.Amplitude); // other in Newtons
                 }
                 else
@@ -69,13 +65,11 @@ namespace Physea
                 }
             }
 
-
-            // http://en.wikipedia.org/wiki/Equations_for_a_falling_body
-            // this.PositionY = 0.5 * (TotalForce.Y / Mass) * t * t; // works for fall
-
-            this.PositionX += (((TotalForce.X / Mass) * t / 2) + this.Velocity.X);
-            this.PositionY += (((TotalForce.Y / Mass) * t / 2) + this.Velocity.Y);
             this.Velocity += this.TotalForce / this.Mass;
+
+            this.PositionX += ((2 * t + 1) * (this.TotalForce.X / this.Mass)) / 2;
+            this.PositionY += ((2 * t + 1) * (this.TotalForce.Y / this.Mass)) / 2;
         }
+
     }
 }

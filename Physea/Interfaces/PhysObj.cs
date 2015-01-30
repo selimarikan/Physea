@@ -12,7 +12,9 @@ namespace Physea
         double Density { get; }         // kg/m^3
         double PositionX { get; set; }
         double PositionY { get; set; }
+        List<Force> Forces { get; set; }
         Vector2D TotalForce { get; set; }
         Vector2D Velocity { get; set; }
+        void CalculateForces(double t);
     }
 }
