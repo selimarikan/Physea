@@ -55,27 +55,44 @@
             <Setter Property="FontStyle" Value="Normal" />
             <Setter Property="FontFamily" Value="Segoe UI" />
         </Style>
+        <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="#505050" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="FontStyle" Value="Normal" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
+        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Background" Value="#505050" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="FontStyle" Value="Normal" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="8*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Canvas Grid.Row="1" Height="600" Width="1000">
             <!--<Rectangle x:Name="REKT" Canvas.Left="40" Canvas.Top="31" Width="{Binding RektWidth}" Height="41" Fill="Blue"  />-->
             <!--<Ellipse Canvas.Left="130" Canvas.Top="79" Width="58" Height="58" Fill="Azure"  />-->
             <Rectangle x:Name="Cube" Fill="Azure"/>
-            
+
+            <Ellipse x:Name="Sphere" Fill="WhiteSmoke" />
         </Canvas>
         
         
         
         <StackPanel Orientation="Horizontal" Grid.Row="2" Background="#505050">
             <StackPanel Orientation="Vertical" Margin="5">
-                <TextBlock Text="Mass" Style="{StaticResource TextBlockStyle}"/>
-                <TextBox x:Name="MassTBo" Style="{StaticResource TextBoxStyle}" Width="50"/>
+                <TextBlock Text="Mass (kg)" Style="{StaticResource TextBlockStyle}"/>
+                <TextBox x:Name="MassTBo" Style="{StaticResource TextBoxStyle}" Text="{Binding Mass}" Width="50"/>
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="5">
                 <TextBlock Text="Size" Style="{StaticResource TextBlockStyle}"/>
@@ -101,6 +118,14 @@
             <StackPanel Orientation="Vertical" Margin="5">
                 <TextBlock Text="YPosition (m)" Style="{StaticResource TextBlockStyle}"/>
                 <TextBlock x:Name="YPosTBl" Text="{Binding YPosition}" Style="{StaticResource TextBlockStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="5">
+                <RadioButton x:Name="CubeRB" Content="Cube" Style="{StaticResource RadioButtonStyle}"/>
+                <RadioButton x:Name="SphereRB" Content="Sphere" Style="{StaticResource RadioButtonStyle}"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="5">
+                <CheckBox x:Name="UseGravityCB" Content="Use Gravity" Style="{StaticResource CheckBoxStyle}"/>
+                <CheckBox x:Name="UseAirResistanceCB" Content="Use Air resistance" Style="{StaticResource CheckBoxStyle}"/>
             </StackPanel>
         </StackPanel>
         <Button Grid.Row="3" Content="Start" Click="Button_Click" Style="{StaticResource ButtonStyle}" />

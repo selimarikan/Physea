@@ -18,7 +18,7 @@ namespace Physea
 {
     public partial class GUI : UserControl
     {
-
+        public static int FPS = 60;
 
         public double Weight
         {
@@ -44,8 +44,6 @@ namespace Physea
         public static readonly DependencyProperty VelocityProperty =
             DependencyProperty.Register("Velocity", typeof(double), typeof(GUI), null);
 
-
-
         public double XPosition
         {
             get { return (double)GetValue(XPositionProperty); }
@@ -53,8 +51,6 @@ namespace Physea
         }
         public static readonly DependencyProperty XPositionProperty =
             DependencyProperty.Register("XPosition", typeof(double), typeof(GUI), null);
-
-
 
         public double YPosition
         {
@@ -64,6 +60,14 @@ namespace Physea
         public static readonly DependencyProperty YPositionProperty =
             DependencyProperty.Register("YPosition", typeof(double), typeof(GUI), null);
 
+        public double Mass
+        {
+            get { return (double)GetValue(MassProperty); }
+            set { SetValue(MassProperty, value); }
+        }
+        public static readonly DependencyProperty MassProperty =
+            DependencyProperty.Register("Mass", typeof(double), typeof(GUI), null);
+
         
 
 
@@ -71,25 +75,40 @@ namespace Physea
         {
             InitializeComponent();
             this.DataContext = this;
-
-            
+            this.Mass = 100;
+            this.CubeRB.IsChecked = true;
+            this.UseGravityCB.IsChecked = true;
+            this.UseAirResistanceCB.IsChecked = true;
         }
 
-        public void DoPhysics()
+        public void DoPhysics(double massOfObj, bool isCube, bool useGravity, bool useAirResistance)
         {
-            int FPS = 1;
-            int objMass = 1000;
+
+            //int objMass = 1000;
 
             Gravity g = new Gravity();
-            AirResistance ar = new AirResistance(0, 0, objMass);
+            AirResistance ar = new AirResistance(0, 0, massOfObj);
+            PhysObj c;
+            double tick = 0;
 
-            Cube c = new Cube(1, objMass, 0, 0); // 1m, 1000kg, 0x, 0y
-            c.Forces.Add(g); // gravity
-            //c.Forces.Add(ar); // air resistance
 
-            double tick = 1;
+            if (isCube)
+            {
+                c = new Cube(3, massOfObj, 0, 0); // 
+            }
+            else
+            {
+                c = new Sphere(1.5, massOfObj, 0, 0);
+            }
 
-            
+            if (useGravity)
+            {
+                c.Forces.Add(g); // gravity
+            }
+            if (useAirResistance)
+            {
+                c.Forces.Add(ar); // air resistance
+            }
 
             while (true)
             {
@@ -102,34 +121,50 @@ namespace Physea
                 
 
                 Console.WriteLine("Sec: " + tick / FPS +
-                                  " X pos = " + c.PositionX +
-                                  " Y pos = " + c.PositionY +
-                                  " Fg: " + c.Forces[0].Amplitude * objMass + "N" +
-                          //        " Fd: " + c.Forces[1].Amplitude + "N" +
-                                  " V: " + c.Velocity.Length +
+                                  " X pos = " + c.PositionX + "m" +
+                                  " Y pos = " + c.PositionY + "m" +
+                                  " Fg: " + g.Amplitude * massOfObj + "N" +
+                                  " Fd: " + ar.Amplitude + "N" +
+                                  " V: " + c.Velocity.Length + "m/s" +
                                   " VecLen: " + c.TotalForce.Length +
                                   "\n");
 
                 this.Dispatcher.Invoke((Action)(() =>
                 {
                     Weight = Math.Truncate(c.Mass * g.Amplitude * 100) / 100;
-                    //Drag = Math.Truncate(c.Forces[1].Amplitude * 100) / 100;
+                    Drag = Math.Truncate(ar.Amplitude * 100) / 100;
                     Velocity = Math.Truncate(c.Velocity.Length * 100) / 100;
                     XPosition = Math.Truncate(c.PositionX * 100) / 100;
                     YPosition = Math.Truncate(c.PositionY * 100) / 100;
 
-                    double x = c.PositionX;
-                    double y = -c.PositionY;
+                    if (isCube)
+                    {
+                        double x = c.PositionX;
+                        double y = -c.PositionY;
 
-                    double w = c.Width;
-                    double h = c.Height;
+                        double w = (c as Cube).Width;
+                        double h = (c as Cube).Height;
 
-                    Canvas.SetLeft(Cube, x);
-                    Canvas.SetTop(Cube, y);
-                    Cube.Width = w;
-                    Cube.Height = h;
+                        Canvas.SetLeft(Cube, x);
+                        Canvas.SetTop(Cube, y);
+                        Cube.Width = w;
+                        Cube.Height = h;
+                    }
+                    else
+                    {
+                        double x = c.PositionX;
+                        double y = -c.PositionY;
+                        double w = (c as Sphere).Radius;
+                        double h = (c as Sphere).Radius;
+
+                        Canvas.SetLeft(Sphere, x);
+                        Canvas.SetTop(Sphere, y);
+                        Sphere.Width = w * 2;
+                        Sphere.Height = h * 2;
+                    }
+                   
                 }));
-                
+
                 tick++;
             }
 
@@ -139,7 +174,20 @@ namespace Physea
         {
             Task<bool>.Factory.StartNew(() =>
             {
-                DoPhysics();
+                double mass = 0;
+                bool? isCube = false;
+                bool? useGravity = true;
+                bool? useAirResistance = true;
+
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    mass = Mass;
+                    isCube = CubeRB.IsChecked;
+                    useGravity = UseGravityCB.IsChecked;
+                    useAirResistance = UseAirResistanceCB.IsChecked;
+                }));
+
+                DoPhysics(mass, (bool)isCube, (bool)useGravity, (bool)useAirResistance);
                 return true;
             });
         }

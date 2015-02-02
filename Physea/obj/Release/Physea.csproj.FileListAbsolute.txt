@@ -1,0 +1,9 @@
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\bin\Release\Physea.exe
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\bin\Release\Physea.pdb
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\GUI.baml
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\GUI.g.cs
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\Physea_MarkupCompile.cache
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\Physea.g.resources
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\Physea.exe
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\Physea.pdb
+C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Release\Physea.csprojResolveAssemblyReference.cache

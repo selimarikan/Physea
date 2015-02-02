@@ -65,11 +65,18 @@ namespace Physea
                 }
             }
 
-            this.Velocity += this.TotalForce / this.Mass;
+            // http://en.wikipedia.org/wiki/Equations_for_a_falling_body
 
-            this.PositionX += ((2 * t + 1) * (this.TotalForce.X / this.Mass)) / 2;
-            this.PositionY += ((2 * t + 1) * (this.TotalForce.Y / this.Mass)) / 2;
+            if (t != 0)
+            {
+                this.Velocity += (this.TotalForce / this.Mass) / GUI.FPS;
+                // 2
+                //this.PositionX += ((TotalForce.X / Mass) * t) - (Velocity.X / (2 * t));
+                //this.PositionY += ((TotalForce.Y / Mass) * t) - (Velocity.Y / (2 * t));
+
+                this.PositionX += (Velocity.X - (TotalForce.X / (Mass * 2))) / GUI.FPS;
+                this.PositionY += (Velocity.Y - (TotalForce.Y / (Mass * 2))) / GUI.FPS;
+            }
         }
-
     }
 }
