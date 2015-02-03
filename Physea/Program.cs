@@ -36,7 +36,7 @@ namespace Physea
 
             
         
-        //window.Show();
+            //window.Show();
 
             //Force2D f1 = new Force2D(8, new Vector2D(1, 0));
             //c.Forces.Add(f1);

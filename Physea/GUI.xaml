@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="600"
-             Background="#303030">
+             Background="#303030"
+             KeyDown="UserControl_KeyDown">
     <UserControl.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="#878787" />
@@ -79,12 +80,11 @@
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Canvas Grid.Row="1" Height="600" Width="1000">
-            <!--<Rectangle x:Name="REKT" Canvas.Left="40" Canvas.Top="31" Width="{Binding RektWidth}" Height="41" Fill="Blue"  />-->
-            <!--<Ellipse Canvas.Left="130" Canvas.Top="79" Width="58" Height="58" Fill="Azure"  />-->
-            <Rectangle x:Name="Cube" Fill="Azure"/>
+        <Canvas Grid.Row="1" Height="600" Width="1000" MouseDown="Canvas_MouseDown" MouseMove="Canvas_MouseMove" MouseUp="Canvas_MouseUp" x:Name="MainCanvas">
 
-            <Ellipse x:Name="Sphere" Fill="WhiteSmoke" />
+            <!--<Rectangle x:Name="Cube" Fill="Azure"/>
+
+            <Ellipse x:Name="Sphere" Fill="WhiteSmoke" />-->
         </Canvas>
         
         
@@ -128,7 +128,15 @@
                 <CheckBox x:Name="UseAirResistanceCB" Content="Use Air resistance" Style="{StaticResource CheckBoxStyle}"/>
             </StackPanel>
         </StackPanel>
-        <Button Grid.Row="3" Content="Start" Click="Button_Click" Style="{StaticResource ButtonStyle}" />
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Start" Click="Start_Click" Style="{StaticResource ButtonStyle}" Margin="4"/>
+            <Button Grid.Column="1" Content="Stop" Click="Stop_Click" Style="{StaticResource ButtonStyle}" Margin="4"/>
+            
+        </Grid>
         
     </Grid>
 </UserControl>

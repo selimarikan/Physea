@@ -23,16 +23,14 @@ namespace Physea
 
         public double Area { get; set; }
         public double ObjectVelocity { get; set; }
-        public double ObjectMass { get; set; }
 
-        public AirResistance(double area, double velocity, double mass)
+        public AirResistance(double area, double velocity)
         {
             this.Direction = new Vector2D(0, 0); // should be inverse of the current movement direction
             this.DragCoefficient = 1.05; // for cube
             this.AirDensity = 1.225; // kg/m^3
             this.Area = area; // m^2
             this.ObjectVelocity = velocity; // flow velocity, relative to the object
-            this.ObjectMass = mass;
         }
     }
 }

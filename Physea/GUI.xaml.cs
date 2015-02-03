@@ -19,6 +19,23 @@ namespace Physea
     public partial class GUI : UserControl
     {
         public static int FPS = 60;
+        public static List<PhysObj> PhysObjects = new List<PhysObj>();
+        public static List<Shape> ObjShapes = new List<Shape>();
+        public static Task<bool> ProcessingTask;
+        public static bool CancelTask = false;
+
+        public static PhysObj c;
+
+        public static Gravity g = new Gravity();
+        public static AirResistance ar = new AirResistance(0, 0);
+        
+
+
+        public static Force2D defaultUp = new Force2D(20, new Vector2D(0, 1));
+        public static Force2D defaultDown = new Force2D(20, new Vector2D(0, 1));
+        public static Force2D defaultLeft = new Force2D(20, new Vector2D(0, 1));
+        public static Force2D defaultRight = new Force2D(20, new Vector2D(0, 1));
+
 
         public double Weight
         {
@@ -68,13 +85,17 @@ namespace Physea
         public static readonly DependencyProperty MassProperty =
             DependencyProperty.Register("Mass", typeof(double), typeof(GUI), null);
 
-        
+
+        bool isClicked = false;
+        Point clickCoord;
 
 
         public GUI()
         {
             InitializeComponent();
             this.DataContext = this;
+
+            // Settings
             this.Mass = 100;
             this.CubeRB.IsChecked = true;
             this.UseGravityCB.IsChecked = true;
@@ -83,96 +104,137 @@ namespace Physea
 
         public void DoPhysics(double massOfObj, bool isCube, bool useGravity, bool useAirResistance)
         {
-
-            //int objMass = 1000;
-
-            Gravity g = new Gravity();
-            AirResistance ar = new AirResistance(0, 0, massOfObj);
-            PhysObj c;
             double tick = 0;
-
 
             if (isCube)
             {
-                c = new Cube(3, massOfObj, 0, 0); // 
+                PhysObjects.Add(new Cube(3, massOfObj, 0, 0));
             }
             else
             {
-                c = new Sphere(1.5, massOfObj, 0, 0);
+                PhysObjects.Add(new Sphere(1.5, massOfObj, 0, 0));
             }
 
             if (useGravity)
             {
-                c.Forces.Add(g); // gravity
+                foreach (PhysObj o in PhysObjects)
+                {
+                    o.Forces.Add(g); // gravity
+                }     
             }
+
             if (useAirResistance)
             {
-                c.Forces.Add(ar); // air resistance
+                foreach (PhysObj o in PhysObjects)
+                {
+                    o.Forces.Add(ar); // air resistance
+                }
             }
 
             while (true)
             {
                 Thread.Sleep(1000 / FPS);
 
-                c.CalculateForces(tick / FPS);
-
-
-
-                
-
-                Console.WriteLine("Sec: " + tick / FPS +
-                                  " X pos = " + c.PositionX + "m" +
-                                  " Y pos = " + c.PositionY + "m" +
-                                  " Fg: " + g.Amplitude * massOfObj + "N" +
-                                  " Fd: " + ar.Amplitude + "N" +
-                                  " V: " + c.Velocity.Length + "m/s" +
-                                  " VecLen: " + c.TotalForce.Length +
-                                  "\n");
+                if (CancelTask)
+                {
+                    return;
+                }
 
                 this.Dispatcher.Invoke((Action)(() =>
                 {
-                    Weight = Math.Truncate(c.Mass * g.Amplitude * 100) / 100;
-                    Drag = Math.Truncate(ar.Amplitude * 100) / 100;
-                    Velocity = Math.Truncate(c.Velocity.Length * 100) / 100;
-                    XPosition = Math.Truncate(c.PositionX * 100) / 100;
-                    YPosition = Math.Truncate(c.PositionY * 100) / 100;
+                    // controls needs to get set per object
 
-                    if (isCube)
-                    {
-                        double x = c.PositionX;
-                        double y = -c.PositionY;
-
-                        double w = (c as Cube).Width;
-                        double h = (c as Cube).Height;
-
-                        Canvas.SetLeft(Cube, x);
-                        Canvas.SetTop(Cube, y);
-                        Cube.Width = w;
-                        Cube.Height = h;
-                    }
-                    else
-                    {
-                        double x = c.PositionX;
-                        double y = -c.PositionY;
-                        double w = (c as Sphere).Radius;
-                        double h = (c as Sphere).Radius;
-
-                        Canvas.SetLeft(Sphere, x);
-                        Canvas.SetTop(Sphere, y);
-                        Sphere.Width = w * 2;
-                        Sphere.Height = h * 2;
-                    }
-                   
+                    //if (Keyboard.IsKeyDown(Key.Right))
+                    //{
+                    //    Force2D f = new Force2D(20, new Vector2D(1, 0));
+                    //    c.Forces.Add(f);
+                    //}
+                    //else if (Keyboard.IsKeyDown(Key.Up))
+                    //{
+                    //    Force2D f = new Force2D(20, new Vector2D(0, 1));
+                    //    c.Forces.Add(f);
+                    //}
                 }));
+
+                CalculatePhysics(tick);
+                this.Dispatcher.Invoke((Action)(() =>
+                {
+                    Draw();
+                    if (PhysObjects.Count > 0)
+                    {
+                        Console.WriteLine("Sec: " + tick / FPS +
+                                  " X pos = " + PhysObjects[0].PositionX + "m" +
+                                  " Y pos = " + PhysObjects[0].PositionY + "m" +
+                                  " Fg: " + g.Amplitude * massOfObj + "N" +
+                                  " Fd: " + ar.Amplitude + "N" +
+                                  " V: " + PhysObjects[0].Velocity.Length + "m/s" +
+                                  " VecLen: " + PhysObjects[0].TotalForce.Length +
+                                  "\n");
+                    }
+                    
+                }));
+               
+                
 
                 tick++;
             }
 
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        public void CalculatePhysics(double tick)
         {
-            Task<bool>.Factory.StartNew(() =>
+            foreach (PhysObj o in PhysObjects)
+            {
+                o.CalculateForces(tick / FPS);
+            }
+        }
+
+        public void Draw()
+        {
+            MainCanvas.Children.Clear();
+
+            foreach (PhysObj o in PhysObjects)
+            {
+                Type oType = o.GetType();
+
+                if (oType == typeof(Cube))
+                {
+                    Rectangle r = new Rectangle();
+                    r.Width = (o as Cube).Width;
+                    r.Height = (o as Cube).Height;
+                    Canvas.SetLeft(r, o.PositionX);
+                    Canvas.SetTop(r, -o.PositionY);
+                    r.Fill = Brushes.Aqua;
+                    MainCanvas.Children.Add(r);
+                }
+
+                else if (oType == typeof(Sphere))
+                {
+                    Ellipse e = new Ellipse();
+                    e.Width = (o as Sphere).Radius * 2;
+                    e.Height = e.Width;
+                    Canvas.SetLeft(e, o.PositionX);
+                    Canvas.SetTop(e, -o.PositionY);
+                    e.Fill = Brushes.Aqua;
+                    MainCanvas.Children.Add(e);
+                }
+
+                // UI Values, needs solution for mult objs
+                Weight = Math.Truncate(o.Mass * g.Amplitude * 100) / 100;
+                Drag = Math.Truncate(ar.Amplitude * 100) / 100;
+                Velocity = Math.Truncate(o.Velocity.Length * 100) / 100;
+                XPosition = Math.Truncate(o.PositionX * 100) / 100;
+                YPosition = Math.Truncate(o.PositionY * 100) / 100;
+            }
+
+            
+        }
+
+        private void Start_Click(object sender, RoutedEventArgs e)
+        {
+            CancelTask = false;
+
+            ProcessingTask = Task<bool>.Factory.StartNew(() =>
             {
                 double mass = 0;
                 bool? isCube = false;
@@ -187,9 +249,45 @@ namespace Physea
                     useAirResistance = UseAirResistanceCB.IsChecked;
                 }));
 
+                if (CancelTask)
+                {
+                    return false;
+                }
+
                 DoPhysics(mass, (bool)isCube, (bool)useGravity, (bool)useAirResistance);
                 return true;
             });
+        }
+
+        private void Canvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //isClicked = true;
+            //clickCoord = e.GetPosition(this);
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            //if (isClicked)
+            //{
+
+            //}
+        }
+
+        private void Canvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            //isClicked = false;
+        }
+
+        private void UserControl_KeyDown(object sender, KeyEventArgs e) // global key grab??
+        {
+
+        }
+
+        private void Stop_Click(object sender, RoutedEventArgs e)
+        {
+            CancelTask = true;
+            PhysObjects.Clear();
+            MainCanvas.Children.Clear();
         }
     }
 }
