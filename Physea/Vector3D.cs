@@ -13,16 +13,16 @@ namespace Physea
 
         public Vector3D(double x, double y, double z)
         {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
+            X = x;
+            Y = y;
+            Z = z;
         }
 
         public Vector3D(Vector3D v)
         {
-            this.X = v.X;
-            this.Y = v.Y;
-            this.Z = v.Z;
+            X = v.X;
+            Y = v.Y;
+            Z = v.Z;
         }
     }
 }

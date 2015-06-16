@@ -12,11 +12,8 @@ namespace Physea
 
     public class Program
     {
-        
         public static volatile Window window;
         static readonly object locker = new object();
-
-        
 
         [STAThread]
         static void Main(string[] args)
@@ -26,25 +23,8 @@ namespace Physea
             window = new Window();
             window.Title = "Physea";
             window.Content = new GUI();
-            
-
-
-            //Thread t = new Thread(Program.DoPhysics);
-            //t.SetApartmentState(ApartmentState.MTA);
-            //t.Priority = ThreadPriority.AboveNormal;
-            //t.Start();
-
-            
-        
-            //window.Show();
-
-            //Force2D f1 = new Force2D(8, new Vector2D(1, 0));
-            //c.Forces.Add(f1);
-
-
 
             app.Run(window);
-
         }
     }
 }

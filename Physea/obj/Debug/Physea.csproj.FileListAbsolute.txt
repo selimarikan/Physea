@@ -7,3 +7,5 @@ C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Debug\G
 C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Debug\GUI.g.cs
 C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Debug\Physea_MarkupCompile.cache
 C:\Users\sarikan\Documents\Visual Studio 2012\Projects\Physea\Physea\obj\Debug\Physea.g.resources
+C:\Users\sarikan.IVS\Documents\GitHub\Physea\Physea\obj\Debug\Physea.exe
+C:\Users\sarikan.IVS\Documents\GitHub\Physea\Physea\obj\Debug\Physea.pdb

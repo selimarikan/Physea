@@ -28,14 +28,11 @@ namespace Physea
 
         public static Gravity g = new Gravity();
         public static AirResistance ar = new AirResistance(0, 0);
-        
-
 
         public static Force2D defaultUp = new Force2D(20, new Vector2D(0, 1));
         public static Force2D defaultDown = new Force2D(20, new Vector2D(0, 1));
         public static Force2D defaultLeft = new Force2D(20, new Vector2D(0, 1));
         public static Force2D defaultRight = new Force2D(20, new Vector2D(0, 1));
-
 
         public double Weight
         {
@@ -89,6 +86,8 @@ namespace Physea
         bool isClicked = false;
         Point clickCoord;
 
+        Force2D fx = new Force2D(20, new Vector2D(1, 0));
+        Force2D fy = new Force2D(20, new Vector2D(0, 1));
 
         public GUI()
         {
@@ -96,10 +95,10 @@ namespace Physea
             this.DataContext = this;
 
             // Settings
-            this.Mass = 100;
-            this.CubeRB.IsChecked = true;
-            this.UseGravityCB.IsChecked = true;
-            this.UseAirResistanceCB.IsChecked = true;
+            Mass = 100;
+            CubeRB.IsChecked = true;
+            UseGravityCB.IsChecked = true;
+            UseAirResistanceCB.IsChecked = true;
         }
 
         public void DoPhysics(double massOfObj, bool isCube, bool useGravity, bool useAirResistance)
@@ -143,20 +142,34 @@ namespace Physea
                 this.Dispatcher.Invoke((Action)(() =>
                 {
                     // controls needs to get set per object
+                    
 
-                    //if (Keyboard.IsKeyDown(Key.Right))
-                    //{
-                    //    Force2D f = new Force2D(20, new Vector2D(1, 0));
-                    //    c.Forces.Add(f);
-                    //}
-                    //else if (Keyboard.IsKeyDown(Key.Up))
-                    //{
-                    //    Force2D f = new Force2D(20, new Vector2D(0, 1));
-                    //    c.Forces.Add(f);
-                    //}
+                    if (Keyboard.IsKeyDown(Key.Right))
+                    {
+                        foreach (PhysObj o in PhysObjects)
+                        {
+                            o.Forces.Add(fx);
+                        }
+                    }
+                    else if (Keyboard.IsKeyDown(Key.Up))
+                    {
+                        foreach (PhysObj o in PhysObjects)
+                        {
+                            o.Forces.Add(fy);
+                        }
+                    }
+                    else
+                    {
+                        foreach (PhysObj o in PhysObjects)
+                        {
+                            o.Forces.Remove(fx); o.Forces.Remove(fy);
+                        }
+                    }
+                        
                 }));
 
                 CalculatePhysics(tick);
+
                 this.Dispatcher.Invoke((Action)(() =>
                 {
                     Draw();

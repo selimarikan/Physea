@@ -12,8 +12,8 @@ namespace Physea
 
         public Gravity()
         {
-            this.Amplitude = 9.8;
-            this.Direction = new Vector2D(0, -1);
+            Amplitude = 9.8;
+            Direction = new Vector2D(0, -1);
         }
     }
 }

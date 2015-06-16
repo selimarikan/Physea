@@ -12,8 +12,8 @@ namespace Physea
 
         public Force2D(double Amp, Vector2D Dir) // dir must be normalized
         {
-            this.Amplitude = Amp;
-            this.Direction = Dir;
+            Amplitude = Amp;
+            Direction = Dir;
         }
     }
 }

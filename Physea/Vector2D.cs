@@ -12,14 +12,14 @@ namespace Physea
 
         public Vector2D(double x, double y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public Vector2D(Vector2D v)
         {
-            this.X = v.X;
-            this.Y = v.Y;
+            X = v.X;
+            Y = v.Y;
         }
 
         public double Length
@@ -32,18 +32,18 @@ namespace Physea
 
         public Vector2D Direction()
         {
-            return new Vector2D(this.X / Math.Abs(this.X + this.Y), this.Y / Math.Abs(this.X + this.Y));
+            return new Vector2D(X / Math.Abs(X + Y), Y / Math.Abs(X + Y));
         }
 
         public Vector2D Normalized()
         {
-            if (this.Length == 0)
+            if (Length == 0)
             {
                 return this;
             }
             else
             {
-                return new Vector2D(this.X / this.Length, this.Y / this.Length);
+                return new Vector2D(X / Length, Y / Length);
             }
         }
 
@@ -67,6 +67,5 @@ namespace Physea
         {
             return new Vector2D(v.X / scalar, v.Y / scalar);
         }
-
     }
 }
